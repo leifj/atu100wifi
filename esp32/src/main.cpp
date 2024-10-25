@@ -3,6 +3,7 @@
 #include <ArduinoJson.h>
 #include <WiFiManager.h>
 #include <ESPAsyncWebServer.h>
+#include <ESPAsyncHTTPUpdateServer.h>
 #include <SPIFFS.h>
 #include <Wire.h>
 #ifdef VDISP
@@ -49,9 +50,8 @@ Adafruit_SSD1306 oled(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire1, -1);
 
 StaticJsonDocument<1024> doc;
 
-// Web server running on port 80
-//WebServer server(80);
 AsyncWebServer server(80);
+ESPAsyncHTTPUpdateServer updateServer;
 
 void addBool(JsonDocument *doc, String name, bool value) {
   if (value) {
@@ -74,14 +74,13 @@ void getStatus(AsyncWebServerRequest *request) {
 }
 
 void setupApi() {
+  DefaultHeaders::Instance().addHeader("Access-Control-Allow-Origin", "*");
+  DefaultHeaders::Instance().addHeader("Access-Control-Allow-Methods", "GET, POST, PUT");
+  DefaultHeaders::Instance().addHeader("Access-Control-Allow-Headers", "Content-Type");
+  server.serveStatic("/", SPIFFS, "/").setDefaultFile("index.html");
+  server.serveStatic("/s/", SPIFFS, "/");
   server.on("/api/status", HTTP_GET, [](AsyncWebServerRequest *request){
     getStatus(request);
-  });
-  server.on("/",HTTP_GET, [](AsyncWebServerRequest *request){
-    request->send(SPIFFS, "/index.html", String());
-  });
-  server.on("/style.css",HTTP_GET, [](AsyncWebServerRequest *request){
-    request->send(SPIFFS, "/style.css", String());
   });
   server.on("/api/reset", HTTP_GET, [](AsyncWebServerRequest *request){
     digitalWrite(RESET_PIN, HIGH);
@@ -127,7 +126,8 @@ void setupApi() {
     on=false;
     getStatus(request);
   });
-  // start server
+  updateServer.setup(&server);
+  updateServer.setup(&server,OTA_USER,OTA_PASSWORD);
   server.begin();
 }
 
@@ -276,7 +276,7 @@ void loop() {
                 capacitance = displayContent.substring(75, 79);
                 capacitance.trim();
             } else {
-                lcNetwork = false;
+                lcNetwork = true;
                 inductance = displayContent.substring(75, 79);
                 capacitance = displayContent.substring(11, 15);
                 capacitance.trim();

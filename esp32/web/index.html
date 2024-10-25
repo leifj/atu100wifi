@@ -1,0 +1,78 @@
+<html>
+   <head>
+      <title>atu100</title>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width">
+      <script src="/s/hyperscript.js"></script>
+      <link rel="stylesheet" href="/s/pico.min.css"/>
+   </head>
+   <body>
+      <main class="container">
+      <h1>ATU100</h1>
+      <div class="grid">
+          <form _="on load
+                    repeat forever 
+                      send check to <fieldset/>
+                      wait 3s
+                    end
+                  end 
+                 ">
+             <fieldset _="on check 
+                             fetch /api/status as an Object 
+                             put it into st
+                             send status(st:st) to .status">
+                <button class="outline status" _="on status(st) 
+                                                     if st.power remove .outline from me else add .outline to me
+                                                  on click if .outline fetch fetch /api/on else fetch /api/off
+                                                     send check to <fieldset/>" id="power" name="power">Power</button>
+                <button class="outline status" _="on status(st) 
+                                                     if st.tuning remove .outline from me else add .outline to me
+                                                  on click fetch /api/tune
+                                                     send check to <fieldset/>" id="tune" name="tune">Tune</button>
+                <button class="outline status" _="on status(st) 
+                                                     if st.resetting remove .outline from me else add .outline to me
+                                                  on click 
+                                                     fetch /api/reset
+                                                     send check to <fieldset/>" id="reset" name="reset">Reset</button>
+                <button class="outline status" _="on status(st) 
+                                                     if st.auto_mode remove .outline from me else add .outline to me
+                                                  on click fetch /api/auto
+                                                     send check to <fieldset/>" id="auto" name="auto">Auto</button>
+                <button class="outline status" _="on status(st) 
+                                                     if st.bypass remove .outline from me else add .outline to me
+                                                  on click fetch /api/bypass
+                                                     send check to <fieldset/>" id="bypass" name="bypass">Bypass</button>
+             </fieldset>
+          </form> 
+          <table>
+             <tbody>
+                <tr>
+                   <th>fwd</th>
+                   <td class"status" _="on status(st) put st.pwr_out" id="fwd"></td>
+                </tr>
+                <tr>
+                   <th>rev</th>
+                   <td class"status" _="on status(st) put st.pwr_in" id="rev"></td>
+                </tr>
+                <tr>
+                   <th>vswr</th>
+                   <td class"status" _="on status(st) put st.swr" id="vswr"></td>
+                </tr>
+                <tr> 
+                   <th>efficiency</th>
+                   <td class"status" _="on status(st) put st.efficiency" id="efficiency"></td>
+                </tr> 
+                <tr> 
+                   <th>inductance</th>
+                   <td class"status" _="on status(st) put st.inductance" id="inductance"></td>
+                </tr>
+                <tr>
+                   <th>capacitance</th>
+                   <td class"status" _="on status(st) put st.capacitance" id="capacitance"></td>
+                </tr>
+             </tbody>
+          </table>
+      </div>
+      </main>
+   </body>
+</html>
