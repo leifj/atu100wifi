@@ -13,6 +13,7 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 #endif
+#include <ESPmDNS.h>
 
 #define BYPASS_PIN 0
 #define RESET_PIN 15
@@ -204,6 +205,14 @@ void setup() {
         Serial.println("An Error has occurred while mounting SPIFFS");
         return;
     }
+
+    if (!MDNS.begin("atu100")) {   // Set the hostname to "esp32swr.local"
+        Serial.println("Error setting up MDNS responder!");
+        delay(1000);
+    } else {
+        Serial.println("mDNS responder started");
+    }
+    MDNS.addService("http", "tcp", 80);
 
     gpio_pad_select_gpio(RESET_PIN);
     pinMode(RESET_PIN,OUTPUT);

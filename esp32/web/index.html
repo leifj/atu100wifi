@@ -9,11 +9,11 @@
    <body>
       <main class="container">
       <h1>ATU100</h1>
-      <div class="grid">
-          <form _="on load
+      <div>
+          <form class="grid" _="on load
                     repeat forever 
                       send check to <fieldset/>
-                      wait 3s
+                      wait 1s
                     end
                   end 
                  ">
@@ -21,54 +21,56 @@
                              fetch /api/status as an Object 
                              put it into st
                              send status(st:st) to .status">
-                <button class="outline status" _="on status(st) 
-                                                     if st.power remove .outline from me else add .outline to me
-                                                  on click if .outline fetch fetch /api/on else fetch /api/off
-                                                     send check to <fieldset/>" id="power" name="power">Power</button>
-                <button class="outline status" _="on status(st) 
-                                                     if st.tuning remove .outline from me else add .outline to me
-                                                  on click fetch /api/tune
-                                                     send check to <fieldset/>" id="tune" name="tune">Tune</button>
-                <button class="outline status" _="on status(st) 
-                                                     if st.resetting remove .outline from me else add .outline to me
+                <button type="button" class="outline status" _="on status(st) 
+                                                     if st.power == 'true' remove .outline from me else add .outline to me end
+                                                  on click if me matches .outline fetch /api/on as an Object else fetch /api/off as an Object end
+                                                     send check to <fieldset/>" id="power">Power</button>
+                <button type="button" class="outline status" _="on status(st) 
+                                                     if st.tuning == 'true' remove .outline from me else add .outline to me end
+                                                  on click fetch /api/tune as an Object
+                                                     send check to <fieldset/>" id="tune">Tune</button>
+                <button type="button" class="outline status" _="on status(st) 
+                                                     if st.resetting == 'true' remove .outline from me else add .outline to me end
                                                   on click 
-                                                     fetch /api/reset
-                                                     send check to <fieldset/>" id="reset" name="reset">Reset</button>
-                <button class="outline status" _="on status(st) 
-                                                     if st.auto_mode remove .outline from me else add .outline to me
-                                                  on click fetch /api/auto
-                                                     send check to <fieldset/>" id="auto" name="auto">Auto</button>
-                <button class="outline status" _="on status(st) 
-                                                     if st.bypass remove .outline from me else add .outline to me
-                                                  on click fetch /api/bypass
-                                                     send check to <fieldset/>" id="bypass" name="bypass">Bypass</button>
+                                                     fetch /api/reset as an Object
+                                                     send check to <fieldset/>" id="reset">Reset</button>
+                <button type="button" class="outline status" _="on status(st) 
+                                                     if st.auto_mode == 'true' remove .outline from me else add .outline to me end
+                                                  on click fetch /api/auto as an Object
+                                                     send check to <fieldset/>" id="auto">Auto</button>
+                <button type="button" class="outline status" _="on status(st) 
+                                                     if st.bypass == 'true' remove .outline from me else add .outline to me end
+                                                  on click fetch /api/bypass as an Object
+                                                     send check to <fieldset/>" id="bypass">Bypass</button>
+                <button type="button" class="outline status" _="on status(st) 
+                                                     if st.txing == 'true' remove .outline from me else add .outline to me end">Transmit</button>
              </fieldset>
           </form> 
           <table>
              <tbody>
                 <tr>
-                   <th>fwd</th>
-                   <td class"status" _="on status(st) put st.pwr_out" id="fwd"></td>
+                   <th>power in</th>
+                   <td class="status" _="on status(st) log st set my innerHTML to st.pwr_in" id="in"></td>
                 </tr>
                 <tr>
-                   <th>rev</th>
-                   <td class"status" _="on status(st) put st.pwr_in" id="rev"></td>
+                   <th>power out</th>
+                   <td class="status" _="on status(st) set my innerHTML to st.pwr_out" id="out"></td>
                 </tr>
                 <tr>
                    <th>vswr</th>
-                   <td class"status" _="on status(st) put st.swr" id="vswr"></td>
+                   <td class="status" _="on status(st) set my innerHTML to st.swr" id="vswr"></td>
                 </tr>
                 <tr> 
                    <th>efficiency</th>
-                   <td class"status" _="on status(st) put st.efficiency" id="efficiency"></td>
+                   <td class="status" _="on status(st) set my innerHTML to st.efficiency" id="efficiency"></td>
                 </tr> 
                 <tr> 
                    <th>inductance</th>
-                   <td class"status" _="on status(st) put st.inductance" id="inductance"></td>
+                   <td class="status" _="on status(st) set my innerHTML to st.inductance" id="inductance"></td>
                 </tr>
                 <tr>
                    <th>capacitance</th>
-                   <td class"status" _="on status(st) put st.capacitance" id="capacitance"></td>
+                   <td class="status" _="on status(st) set my innerHTML to st.capacitance" id="capacitance"></td>
                 </tr>
              </tbody>
           </table>
